@@ -11,28 +11,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
       - name: Setup Android
         uses: android-actions/setup-android@v3
-      - name: Build APK
+      - name: Build Debug APK
         run: |
           chmod +x gradlew
+          ls -lh gradle/wrapper/
           ./gradlew assembleDebug --stacktrace
-      - name: List APK
-        run: ls -lh app/build/outputs/apk/debug/
-      - name: Upload Artifact
+      - name: FIND APK
+        run: |
+          echo "=== LIST ALL FILES ==="
+          find . -name "*.apk" -type f -exec ls -lh {} \;
+          echo "=== DEBUG FOLDER ==="
+          ls -lh app/build/outputs/apk/ || true
+          ls -lh app/build/outputs/apk/debug/ || true
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: m54me-apk
-          path: app/build/outputs/apk/debug/*.apk
-      - name: Release APK
-        uses: softprops/action-gh-release@v2
-        with:
-          files: app/build/outputs/apk/debug/*.apk
-          tag_name: v1.0.${{ github.run_number }}
-          name: m54me ONLINE LIVE v1.0.${{ github.run_number }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: "**/*.apk"
