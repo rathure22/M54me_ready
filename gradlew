@@ -1,2 +1,1 @@
-#!/bin/sh
-echo gradlew stub
+404: Not Found
